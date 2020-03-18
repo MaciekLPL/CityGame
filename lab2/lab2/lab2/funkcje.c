@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funkcje.h"
+#include "struktury.h"
 
 
 int** create2Darray(int R, int C) {
@@ -59,5 +60,58 @@ int* createArray() {
 		printf_s("%d ", tab[i]);
 	}
 	return tab;
+}
+
+void tablicaMieszajacaWstawianie(listElement** tab, int N, int liczba) {
+	int index = hash(liczba, N);
+	
+	dodajDoListy(&tab[index], liczba);
+
+}
+
+void dodajDoListy(listElement** pHead, int liczba) {
+	listElement* newNode = malloc(sizeof(listElement));
+
+	if (newNode != NULL) {
+		newNode->liczba = liczba;
+		newNode->next = *pHead;
+		*pHead = newNode;
+	}
+
+	return;
+}
+
+void wypiszElementy(listElement** tab, int N) {
+	for (int i = 0; i < N; i++) {
+		wypiszListe(tab[i]);
+		printf_s("\n");
+
+	}
+}
+
+void wypiszListe(listElement* pHead) {
+	listElement* p = pHead;
+	while (p) {
+		printf_s("%d ", p->liczba);
+		p = p->next;
+	}
+}
+
+void usunElementy(listElement** tab, int N) {
+	for (int i = 0; i < N; i++) {
+		usunListe(tab[i]);
+		tab[i] = NULL;
+	}
+}
+
+void usunListe(listElement* pHead) {
+	if (pHead == NULL)
+		return;
+	usunListe(pHead->next);
+	free(pHead);
+}
+
+unsigned int hash(int element, unsigned int rozmiarTablicy) { 
+	return abs(element) % rozmiarTablicy; 
 }
 
