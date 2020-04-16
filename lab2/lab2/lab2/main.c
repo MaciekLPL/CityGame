@@ -22,7 +22,7 @@ int main() {
 
 	//listElement* tab[5] = { 0 };
 
-	listElement** tab = calloc(5, sizeof(int*));
+	/*listElement** tab = calloc(5, sizeof(int*));
 
 
 	tablicaMieszajacaWstawianie(tab, 5, 1);
@@ -34,8 +34,20 @@ int main() {
 
 	wypiszElementy(tab, 5);
 
-	usunElementy(tab, 5);
+	usunElementy(tab, 5);*/
 
+	int* c = calloc(100, sizeof(int));
+	for (int i = 0; i < 100; i++) {
+		printf_s("%d \n", c[i]);
+	}
+
+	printf_s("----------------------\n");
+
+	int* d = malloc(sizeof(int) * 100);
+	for (int i = 0; i < 100; i++) {
+		printf_s("%d \n", d[i]);
+
+	}
 	return 0;
 
 }
