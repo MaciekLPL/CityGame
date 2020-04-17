@@ -62,10 +62,11 @@ void wczytaj(Osoba** osoby, int* n) {
 	if (file2 != NULL) {
 		fread(n, sizeof(int), 1, file2);
 		int size;
+		osoby = calloc(*n, sizeof(Osoba*));
 		for (int i = 0; i < *n; i++) {
 			fread(&size, sizeof(int), 1, file2);
 			osoby[i] = malloc(sizeof(int) + sizeof(char) * size);
-			fread(osoby[i], sizeof(int) + sizeof(char) * size, 1, file2);
+			fread(&osoby[i], sizeof(int) + sizeof(char) * size, 1, file2);
 		}
 	}
 	fclose(file2);
