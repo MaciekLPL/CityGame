@@ -6,8 +6,22 @@
 #include "struktury.h"
 
 double procent(double K, double n, double p, double k) {
+	return K * pow(p / (100 * k) + 1, n * k);
+}
+
+void funkcja() {
+
+	char imie[16];
+	double K, n, p, k;
+	int l;
+
+	if (scanf("%15s %lf %lf %lf %lf %d", imie, &K, &n, &p, &k, &l) != 6) {
+		printf("DUPA ERROR CODE");
+	}
+	else {
+		printf("%s %.*f", imie, l, procent(K, n, p, k));
+	}
 	
-	double s = pow(p/(100*k) + 1, n * k);
-	return K * s;
+	
 
 }
