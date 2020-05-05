@@ -73,7 +73,8 @@ void gotoxy(int x, int y) {
 
 
 void SimplePrintScreen(char** board, int rows, int cols) {
-
+	
+	ShowConsoleCursor(0);
 	gotoxy(0, 0);
 
 	for (int i = 0; i < rows; ++i)
@@ -84,4 +85,5 @@ void SimplePrintScreen(char** board, int rows, int cols) {
 		}
 		putc('\n', stdout);
 	}
+	ShowConsoleCursor(1);
 }
