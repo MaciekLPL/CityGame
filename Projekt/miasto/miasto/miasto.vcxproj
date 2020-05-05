@@ -152,7 +152,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="funkcje.c" />
-    <ClCompile Include="main.c" />
     <ClCompile Include="miasto.c" />
   </ItemGroup>
   <ItemGroup>

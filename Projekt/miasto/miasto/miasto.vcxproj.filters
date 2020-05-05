@@ -18,9 +18,6 @@
     <ClCompile Include="miasto.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="funkcje.c">
       <Filter>Source Files</Filter>
     </ClCompile>
