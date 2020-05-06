@@ -2,6 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+
+#define RED   "\x1B[31m"
+#define GRN   "\x1B[32m"
+#define YEL   "\x1B[33m"
+#define BLU   "\x1B[34m"
+#define MAG   "\x1B[35m"
+#define CYN   "\x1B[36m"
+#define WHT   "\x1B[37m"
+#define RESET "\x1B[0m"
+
 #include <windows.h>
 #include "struktury.h"
 
@@ -27,7 +37,7 @@ void setBorders(char** board, int rows, int cols) {
 		}
 	}
 
-	board[rows - 1][cols / 2] = 186;
+	board[rows - 1][cols / 2] = 'q';
 }
 
 void arrowsHandling(int* x, int* y, int* c, int rows, int cols) {
@@ -70,6 +80,31 @@ void gotoxy(int x, int y) {
 }
 
 
+int drawRoad(char** board, int i, int j, int rows) {
+	int c = 186;
+	if (i == rows - 1);	
+	else if (board[i - 1][j] == 'q' && board[i + 1][j] == 'q' && board[i][j - 1] == 'q' && board[i][j + 1] == 'q')
+		c = 206;
+	else if (board[i][j - 1] == 'q' && board[i - 1][j] == 'q' && board[i + 1][j] == 'q')
+		c = 185;
+	else if (board[i][j - 1] == 'q' && board[i - 1][j] == 'q' && board[i][j + 1] == 'q')
+		c = 202;
+	else if (board[i - 1][j] == 'q' && board[i][j + 1] == 'q' && board[i + 1][j] == 'q')
+		c = 204;
+	else if (board[i][j - 1] == 'q' && board[i + 1][j] == 'q' && board[i][j + 1] == 'q')
+		c = 203;
+	else if (board[i - 1][j] == 'q' && board[i][j - 1] == 'q')
+		c = 188;
+	else if (board[i - 1][j] == 'q' && board[i][j + 1] == 'q')
+		c = 200;
+	else if (board[i + 1][j] == 'q' && board[i][j + 1] == 'q')
+		c = 201;
+	else if (board[i + 1][j] == 'q' && board[i][j - 1] == 'q')
+		c = 187;
+	else if (board[i][j - 1] == 'q' || board[i][j + 1] == 'q')
+		c = 205;
+	return c;
+}
 
 
 void SimplePrintScreen(char** board, int rows, int cols) {
@@ -77,11 +112,17 @@ void SimplePrintScreen(char** board, int rows, int cols) {
 	ShowConsoleCursor(0);
 	gotoxy(0, 0);
 
-	for (int i = 0; i < rows; ++i)
-	{
-		for (int j = 0; j < cols; ++j)
-		{
-			putc(board[i][j], stdout);
+	for (int i = 0; i < rows; ++i) {
+		for (int j = 0; j < cols; ++j) {
+			if (board[i][j] == 'q')
+				printf("%c", drawRoad(board, i, j, rows));
+			else if(board[i][j] == 'w')
+				printf(BLU "%c" RESET, 177);
+			else if(board[i][j] == 'e')
+				printf(CYN "%c" RESET, 177);
+			else
+				putc(board[i][j], stdout);
+
 		}
 		putc('\n', stdout);
 	}

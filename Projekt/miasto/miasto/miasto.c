@@ -9,7 +9,7 @@
 int main() {
 	ShowConsoleCursor(1);
 
-	int rows = 27 + 2, cols = 50 + 2;
+	int rows = 13 + 2, cols = 31 + 2;
 	char** board = createBoard(rows, cols);
 
 	setBorders(board, rows, cols);
@@ -29,12 +29,10 @@ int main() {
 			arrowsHandling(&x, &y, &c, rows, cols);
 		if (c == 'q')
 			board[y][x] = 'q';
-		if (c == 'r')
-			board[y][x] = 'r';
-		if (c == 's')
-			board[y][x] = 's';
-		if (c == 'i')
-			board[y][x] = 'i';
+		if (c == 'w')
+			board[y][x] = 'w';
+		if (c == 'e')
+			board[y][x] = 'e';
 		if (c == 'd')
 			board[y][x] = NULL;
 

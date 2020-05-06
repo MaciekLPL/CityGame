@@ -12,6 +12,8 @@ void ShowConsoleCursor(int showFlag);
 
 void gotoxy(int x, int y);
 
+int drawRoad(char** board, int i, int j, int rows);
+
 void SimplePrintScreen(char** board, int rows, int cols);
 
 #endif
