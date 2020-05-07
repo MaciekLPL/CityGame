@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <conio.h>
+#include <windows.h>
 
 #define RED   "\x1B[31m"
 #define GRN   "\x1B[32m"
@@ -12,7 +13,6 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
-#include <windows.h>
 #include "struktury.h"
 
 
@@ -25,6 +25,7 @@ char** createBoard(int rows, int cols) {
 	return board;
 }
 
+
 void setBorders(char** board, int rows, int cols) {
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
@@ -33,17 +34,18 @@ void setBorders(char** board, int rows, int cols) {
 			else if (j == 0 || j == cols - 1)
 				board[i][j] = 219;
 			else
-				board[i][j] = NULL;
+				board[i][j] = '\0';
 		}
 	}
 
 	board[rows - 1][cols / 2] = 'q';
 }
 
-void arrowsHandling(int* x, int* y, int* c, int rows, int cols) {
-	*c = _getch();
-	switch (*c)
-	{
+
+void arrowsHandling(int* x, int* y, int c, int rows, int cols) {
+	c = _getch();
+
+	switch (c) {
 	case 0x4B:
 		if (*x != 1) (*x)--;
 		break;
@@ -114,10 +116,11 @@ void SimplePrintScreen(char** board, int rows, int cols) {
 
 	for (int i = 0; i < rows; ++i) {
 		for (int j = 0; j < cols; ++j) {
+
 			if (board[i][j] == 'q')
 				printf("%c", drawRoad(board, i, j, rows));
 			else if(board[i][j] == 'w')
-				printf(BLU "%c" RESET, 177);
+				printf(GRN "%c" RESET, 177);
 			else if(board[i][j] == 'e')
 				printf(CYN "%c" RESET, 177);
 			else
@@ -127,4 +130,39 @@ void SimplePrintScreen(char** board, int rows, int cols) {
 		putc('\n', stdout);
 	}
 	ShowConsoleCursor(1);
+}
+
+void drawingTool(char** board, int* x, int* y, int rows, int cols) {
+
+	int x1 = *x, y1 = *y, x2, y2;
+	int tmp = board[*y][*x];
+	int chr = _getch();
+	if (chr != 'q' && chr != 'w' && chr != 'e' && chr != 'd') return;
+	if (chr == 'd') chr = '\0';
+	board[*y][*x] = 'X';
+	SimplePrintScreen(board, rows, cols);
+
+	while (1) {
+		gotoxy(*x, *y);
+		int c = _getch();
+		if (c == 0xE0)
+			arrowsHandling(x, y, c, rows, cols);
+		else if (c == 'a') {
+			x2 = *x, y2 = *y;
+			break;
+		}
+		else {
+			board[y1][x1] = tmp;
+			return;
+		}
+	}
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (((i >= y1 && i <= y2) || (i >= y2 && i <= y1)) &&
+				((j >= x1 && j <= x2) || (j >= x2 && j <= x1)))
+				board[i][j] = chr;
+		}
+	}
+	*x = x2;
+	*y = y2;
 }

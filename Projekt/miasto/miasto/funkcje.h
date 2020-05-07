@@ -6,7 +6,9 @@ char** createBoard(int rows, int cols);
 
 void setBorders(char** board, int rows, int cols);
 
-void arrowsHandling(int* x, int* y, int* c, int rows, int cols);
+void arrowsHandling(int* x, int* y, int c, int rows, int cols);
+
+void drawingTool(char** board, int* x, int* y, int rows, int cols);
 
 void ShowConsoleCursor(int showFlag);
 

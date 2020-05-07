@@ -26,15 +26,19 @@ int main() {
 		int c = _getch();
 
 		if (c == 0xE0)
-			arrowsHandling(&x, &y, &c, rows, cols);
+			arrowsHandling(&x, &y, c, rows, cols);
 		if (c == 'q')
 			board[y][x] = 'q';
 		if (c == 'w')
 			board[y][x] = 'w';
 		if (c == 'e')
 			board[y][x] = 'e';
+		if (c == 'a') {
+			drawingTool(board, &x, &y, rows, cols);	
+		}
+
 		if (c == 'd')
-			board[y][x] = NULL;
+			board[y][x] = '\0';
 
 	}
 
