@@ -5,7 +5,7 @@
 #include <stdbool.h>
 
 typedef struct chunk {
-	int ch;
+	int c;
 	bool active;
 	bool checked;
 }chunk;
