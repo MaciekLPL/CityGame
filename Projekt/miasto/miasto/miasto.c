@@ -9,16 +9,16 @@
 #include "struktury.h"
 
 int main() {
+
 	ShowConsoleCursor(1);
 	LARGE_INTEGER t1;
 	QueryPerformanceCounter(&t1);
 
-
 	int rows = 13 + 2, cols = 31 + 2;
-	char** board = createBoard(rows, cols);
+	chunk** board = createBoard(rows, cols);
 
 	budget* wallet = calloc(1, sizeof(budget));
-	wallet->money = 19999;
+	wallet->money = 199999;
 
 	setBorders(board, rows, cols);
 	int x = 1, y = 1;
@@ -35,19 +35,13 @@ int main() {
 
 		if (c == 0xE0)
 			arrowsHandling(&x, &y, c, rows, cols);
-		if (c == 'q')
+		else if (c == 'q')
 			buildRoad(board, x, y, &wallet);
-		if (c == 'w')
-			board[y][x] = 'w';
-		if (c == 'e')
-			board[y][x] = 'e';
-		if (c == 'x')
-			drawingTool(board, &x, &y, rows, cols, t1, &wallet);
-		if (c == 'd') {
-			if(board[y][x] == 'q')
-				newWallet(1000, &wallet);
-			board[y][x] = '\0';
+		else if (c == 'w' || c == 'e' || c == 'r')
+			setZone(board, x, y, c, &wallet);
+		else if (c == 'd') {
+			c = '\0';
+			setZone(board, x, y, c, &wallet);
 		}
 	}
-
 }

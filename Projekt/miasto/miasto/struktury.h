@@ -6,8 +6,9 @@
 
 typedef struct chunk {
 	int c;
-	bool active;
-	bool checked;
+	int population;
+	int attractiveness;
+
 }chunk;
 
 typedef struct budget {
