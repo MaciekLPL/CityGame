@@ -10,7 +10,6 @@
 
 int main() {
 
-	ShowConsoleCursor(1);
 	LARGE_INTEGER t1;
 	QueryPerformanceCounter(&t1);
 
@@ -20,7 +19,7 @@ int main() {
 	budget* wallet = calloc(1, sizeof(budget));
 	wallet->money = 199999;
 
-	setBorders(board, rows, cols);
+	printBorders(rows, cols);
 	int x = 1, y = 1;
 
 	while (1)
@@ -28,20 +27,20 @@ int main() {
 
 		SimplePrintScreen(board, rows, cols, t1, wallet->money);
 		
-		while (!_kbhit())
-			printMenu(rows, t1, x, y, wallet->money);
-		
+		while (!_kbhit()) {
+			SimplePrintScreen(board, rows, cols, t1, wallet->money);
+		}
 		int c = _getch();
 
 		if (c == 0xE0)
 			arrowsHandling(&x, &y, c, rows, cols);
 		else if (c == 'q')
-			buildRoad(board, x, y, &wallet);
+			buildRoad(board, x-1, y-1, &wallet);
 		else if (c == 'w' || c == 'e' || c == 'r')
-			setZone(board, x, y, c, &wallet);
+			setZone(board, x-1, y-1, c, &wallet);
 		else if (c == 'd') {
 			c = '\0';
-			setZone(board, x, y, c, &wallet);
+			setZone(board, x-1, y-1, c, &wallet);
 		}
 	}
 }
