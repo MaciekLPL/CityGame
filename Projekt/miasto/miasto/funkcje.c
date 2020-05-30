@@ -87,45 +87,52 @@ void arrowsHandling(int* x, int* y, int c, int rows, int cols) {
 }
 
 
-int drawRoad(chunk** board, int i, int j, int rows, int cols) {
+bool isValid(int x, int y, int rows, int cols) {			//x kolumny(j), y wiersze(i)
 
-	int c = 186;
-	if (i == 0 || j == 0 || i == rows-1 || j == cols-1);
-	else if (board[i - 1][j].c == 'q' && board[i + 1][j].c == 'q' && board[i][j - 1].c == 'q' && board[i][j + 1].c == 'q')
-		c = 206;
-	else if (board[i][j - 1].c == 'q' && board[i - 1][j].c == 'q' && board[i + 1][j].c == 'q')
-		c = 185;
-	else if (board[i][j - 1].c == 'q' && board[i - 1][j].c == 'q' && board[i][j + 1].c == 'q')
-		c = 202;
-	else if (board[i - 1][j].c == 'q' && board[i][j + 1].c == 'q' && board[i + 1][j].c == 'q')
-		c = 204;
-	else if (board[i][j - 1].c == 'q' && board[i + 1][j].c == 'q' && board[i][j + 1].c == 'q')
-		c = 203;
-	else if (board[i - 1][j].c == 'q' && board[i][j - 1].c == 'q')
-		c = 188;
-	else if (board[i - 1][j].c == 'q' && board[i][j + 1].c == 'q')
-		c = 200;
-	else if (board[i + 1][j].c == 'q' && board[i][j + 1].c == 'q')
-		c = 201;
-	else if (board[i + 1][j].c == 'q' && board[i][j - 1].c == 'q')
-		c = 187;
-	else if (board[i][j - 1].c == 'q' || board[i][j + 1].c == 'q')
-		c = 205;
-	return c;
-}
-
-
-bool isValid(int x, int y, int rows, int cols) {
-
-	if ((x >= 0 && x < cols - 1) && (y >= 0 && y < rows - 1))
+	if ((x >= 0 && x < cols) && (y >= 0 && y < rows))		//czy pole le¿y w obrêbie planszy
 		return 1;
 	return 0;
 }
 
+
+int drawRoad(chunk** board, int i, int j, int rows, int cols) {
+
+	bool n = 0, e = 0, s = 0, w = 0;
+	if (isValid(j, i - 1, rows, cols))
+		if (board[i - 1][j].c == 'q')
+			n = 1;
+	if (isValid(j + 1, i, rows, cols))
+		if (board[i][j + 1].c == 'q')
+			e = 1;
+	if (isValid(j, i + 1, rows, cols))
+		if (board[i + 1][j].c == 'q')
+			s = 1;
+	if (isValid(j - 1, i, rows, cols))
+		if (board[i][j - 1].c == 'q')
+			w = 1;
+
+	if (j == (cols-2) / 2  && i == rows - 1)		//wyjazd
+		s = 1;
+
+	int c = 186;
+	if (n & e & s & w) c = 206;
+	else if (n & s & w) c = 185;
+	else if (n & e & w) c = 202;
+	else if (n & e & s) c = 204;
+	else if (e & s & w) c = 203;
+	else if (n & w) c = 188;
+	else if (n & e) c = 200;
+	else if (e & s) c = 201;
+	else if (s & w) c = 187;
+	else if (e | w) c = 205;
+	return c;
+}
+
+
 void checkNeigbours(chunk** board, int r, int c, int rows, int cols) {
 
-	for (int i = r - 3; i < r + 3; i++) {
-		for (int j = c - 3; j < c + 3; j++) {
+	for (int i = r - 2; i < r + 2; i++) {
+		for (int j = c - 2; j < c + 2; j++) {
 			if (isValid(j, i, rows, cols))
 				if (board[i][j].c == 'e')
 					board[r][c].attractiveness += 2;
@@ -166,9 +173,12 @@ double getTime(LARGE_INTEGER t1) {
 void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int x, int y, int money) {
 	ShowConsoleCursor(0);
 	double elapsedTime = getTime(t1);
+
 	gotoxy(0, rows+2);
 	printf("Dzien: %d \nGodzina: %02d \n", (int)(elapsedTime / 24), (int)elapsedTime % 24);
 	printf("Budzet: %d\n", money);
+
+
 	if (((int)elapsedTime % 24) == 0) {
 		int population = checkAttractiveness(board, rows, cols);
 		gotoxy(0, rows + 5);
