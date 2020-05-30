@@ -171,7 +171,6 @@ double getTime(LARGE_INTEGER t1) {
 }
 
 void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int x, int y, int money) {
-	ShowConsoleCursor(0);
 	double elapsedTime = getTime(t1);
 
 	gotoxy(0, rows+2);
@@ -185,7 +184,6 @@ void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int x, int y
 		printf("Populacja: %d              ", population);
 	}
 	gotoxy(x, y);
-	ShowConsoleCursor(1);
 }
 
 void SimplePrintScreen(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money) {
@@ -217,7 +215,6 @@ void SimplePrintScreen(chunk** board, int rows, int cols, LARGE_INTEGER t1, int 
 		}
 		gotoxy(1, i+2);
 	}
-	printMenu(board, rows, cols, t1, 1, 1, money);
 	ShowConsoleCursor(1);
 }
 
