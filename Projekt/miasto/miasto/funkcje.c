@@ -131,8 +131,8 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 
 void checkNeigbours(chunk** board, int r, int c, int rows, int cols) {
 
-	for (int i = r - 2; i < r + 2; i++) {
-		for (int j = c - 2; j < c + 2; j++) {
+	for (int i = r - 2; i <= r + 2; i++) {
+		for (int j = c - 2; j <= c + 2; j++) {
 			if (isValid(j, i, rows, cols))
 				if (board[i][j].c == 'e')
 					board[r][c].attractiveness += 2;
@@ -175,14 +175,15 @@ void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int x, int y
 
 	gotoxy(0, rows+2);
 	printf("Dzien: %d \nGodzina: %02d \n", (int)(elapsedTime / 24), (int)elapsedTime % 24);
-	printf("Budzet: %d\n", money);
+	printf("Budzet: %-20d\n", money);
 
 
 	if (((int)elapsedTime % 24) == 0) {
 		int population = checkAttractiveness(board, rows, cols);
 		gotoxy(0, rows + 5);
-		printf("Populacja: %d              ", population);
+		printf("Populacja: %-20d", population);
 	}
+
 	gotoxy(x, y);
 }
 
@@ -241,6 +242,10 @@ void buildRoad(chunk** board, int x, int y, struct budget** wallet) {
 
 
 void setZone(chunk** board, int x, int y, int c, struct budget** wallet) {
+	if (board[y][x].c != c) {
+		board[y][x].population = 0;
+		board[y][x].attractiveness = 0;
+	}
 
 	if (board[y][x].c == 'q')
 		newWallet(1000, wallet);

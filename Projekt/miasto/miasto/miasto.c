@@ -17,7 +17,7 @@ int main() {
 	chunk** board = createBoard(rows, cols);
 
 	budget* wallet = calloc(1, sizeof(budget));
-	wallet->money = 199999;
+	wallet->money = 20000;
 
 	printBorders(rows, cols);
 	int x = 1, y = 1;
