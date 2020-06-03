@@ -29,7 +29,6 @@ void gotoxy(int x, int y) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-
 chunk** createBoard(int rows, int cols) {
 
 	chunk** board = calloc(rows, sizeof(chunk*));
@@ -60,8 +59,26 @@ void printBorders(int rows, int cols) {
 		}
 		gotoxy(0, i + 1);
 	}
-	gotoxy(cols / 2, rows + 1);
+	gotoxy((cols / 2) + 1, rows + 1);
 	putc(186, stdout);
+}
+
+
+void printHelp(int cols) {
+
+	gotoxy(cols + 3, 1);
+	printf("Strzalki - sterowanie");
+	gotoxy(cols + 3, 2);
+	printf("q - Budowa drogi");
+	gotoxy(cols + 3, 3);
+	printf("w - Budowa dzielnicy mieszkalnej");
+	gotoxy(cols + 3, 4);
+	printf("e - Budowa dzielnicy uslugowej");
+	gotoxy(cols + 3, 5);
+	printf("r - Budowa dzielnicy przemyslowej");
+	gotoxy(cols + 3, 6);
+	printf("d - Burzenie");
+
 }
 
 
@@ -111,7 +128,7 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 		if (board[i][j - 1].c == 'q')
 			w = 1;
 
-	if (j == (cols-2) / 2  && i == rows - 1)		//wyjazd
+	if (j == cols / 2 && i == rows - 1)		//wyjazd
 		s = 1;
 
 	int c = 186;
@@ -129,7 +146,7 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 }
 
 
-void checkNeigbours(chunk** board, int r, int c, int rows, int cols) {
+void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols) {
 
 	for (int i = r - 2; i <= r + 2; i++) {
 		for (int j = c - 2; j <= c + 2; j++) {
@@ -143,24 +160,63 @@ void checkNeigbours(chunk** board, int r, int c, int rows, int cols) {
 	}
 }
 
-int checkAttractiveness(chunk** board, int rows, int cols) {
-	int population = 0;
+
+void checkNeigboursService(chunk** board, int r, int c, int rows, int cols) {
+
+	for (int i = r - 2; i <= r + 2; i++) {
+		for (int j = c - 2; j <= c + 2; j++) {
+			if (isValid(j, i, rows, cols))
+				if (board[i][j].c == 'w')
+					board[r][c].attractiveness += 2;
+				else if (board[i][j].c == 'e')
+					board[r][c].attractiveness -= 1;
+				else if (board[i][j].c == 'r')
+					board[r][c].attractiveness += 1;
+		}
+		gotoxy(1, i + 2);
+	}
+}
+
+
+void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols) {
+
+	for (int i = r - 2; i <= r + 2; i++) {
+		for (int j = c - 2; j <= c + 2; j++) {
+			if (isValid(j, i, rows, cols))
+				if (board[i][j].c == 'w')
+					board[r][c].attractiveness -= 1;
+				else if (board[i][j].c == 'e')
+					board[r][c].attractiveness += 1;
+				else if (board[i][j].c == 'r')
+					board[r][c].attractiveness += 1;
+		}
+		gotoxy(1, i + 2);
+	}
+}
+
+
+void checkAttractiveness(chunk** board, int rows, int cols) {
+
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
-			if (board[i][j].c == 'w') {
+			if (board[i][j].c == 'w' || board[i][j].c == 'e' || board[i][j].c == 'r') {
+
 				board[i][j].attractiveness = 0;
-				checkNeigbours(board, i, j, rows, cols);
+
+				if (board[i][j].c == 'w') checkNeigboursResidential(board, i, j, rows, cols);
+				else if (board[i][j].c == 'e') checkNeigboursService(board, i, j, rows, cols);
+				else if (board[i][j].c == 'r') checkNeigboursIndustrial(board, i, j, rows, cols);
+
 				board[i][j].population += board[i][j].attractiveness;
 
 				if (board[i][j].population < 0) board[i][j].population = 0;
 				if (board[i][j].population > 100) board[i][j].population = 100;
-				population += board[i][j].population;
 			}
 		}
 		gotoxy(1, i + 2);
 	}
-	return population;
 }
+
 
 double getTime(LARGE_INTEGER t1) {
 
@@ -170,24 +226,28 @@ double getTime(LARGE_INTEGER t1) {
 	return (t2.QuadPart - t1.QuadPart) / (double)freq.QuadPart;
 }
 
-void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int x, int y, int money) {
-	double elapsedTime = getTime(t1);
 
-	gotoxy(0, rows+2);
-	printf("Dzien: %d \nGodzina: %02d \n", (int)(elapsedTime / 24), (int)elapsedTime % 24);
-	printf("Budzet: %-20d\n", money);
-
-
-	if (((int)elapsedTime % 24) == 0) {
-		int population = checkAttractiveness(board, rows, cols);
-		gotoxy(0, rows + 5);
-		printf("Populacja: %-20d", population);
+int countPopulation(chunk** board, int rows, int cols) {
+	int population = 0;
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			population += board[i][j].population;
+		}
 	}
-
-	gotoxy(x, y);
+	return population;
 }
 
-void SimplePrintScreen(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money) {
+void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money, int population) {
+	double elapsedTime = getTime(t1);
+
+	gotoxy(0, rows + 3);
+	printf("Dzien: %d \nGodzina: %02d \n", (int)(elapsedTime / 24), (int)elapsedTime % 24);
+	printf("Budzet: %-20d\n", money);
+	printf("Populacja: %-20d", population);
+}
+
+
+void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money) {
 	
 	ShowConsoleCursor(0);
 	gotoxy(1, 1);
@@ -220,7 +280,6 @@ void SimplePrintScreen(chunk** board, int rows, int cols, LARGE_INTEGER t1, int 
 }
 
 
-
 void newWallet(int diff, budget** wallet) {
 
 	budget* new_wallet;
@@ -250,4 +309,14 @@ void setZone(chunk** board, int x, int y, int c, struct budget** wallet) {
 	if (board[y][x].c == 'q')
 		newWallet(1000, wallet);
 	board[y][x].c = c;
+}
+
+
+void calcTaxes(int population, budget** wallet) {
+	int taxes = 0;
+	if (population < 2000)
+		taxes = population * 3;
+	else
+		taxes = population * 1.5;
+	newWallet(taxes, wallet);
 }
