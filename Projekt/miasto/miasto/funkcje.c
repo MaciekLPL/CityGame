@@ -5,9 +5,9 @@
 #include <time.h>
 #include <math.h>
 
-#define GRN   "\x1B[32m"
-#define YEL   "\x1B[33m"
-#define BLU   "\x1B[34m"
+#define GRN "\x1B[32m"
+#define YEL "\x1B[33m"
+#define BLU "\x1B[34m"
 #define RST "\x1B[0m"
 
 #include "struktury.h"
@@ -167,7 +167,7 @@ void checkNeigboursService(chunk** board, int r, int c, int rows, int cols) {
 		for (int j = c - 2; j <= c + 2; j++) {
 			if (isValid(j, i, rows, cols))
 				if (board[i][j].c == 'w')
-					board[r][c].attractiveness += 2;
+					board[r][c].attractiveness += 3;
 				else if (board[i][j].c == 'e')
 					board[r][c].attractiveness -= 1;
 				else if (board[i][j].c == 'r')
@@ -294,6 +294,8 @@ void newWallet(int diff, budget** wallet) {
 void buildRoad(chunk** board, int x, int y, struct budget** wallet) {
 
 	if ((*wallet)->money >= 2000 && board[y][x].c != 'q') {
+		board[y][x].population = 0;
+		board[y][x].attractiveness = 0;
 		newWallet(-2000, wallet);
 		board[y][x].c = 'q';
 	}
