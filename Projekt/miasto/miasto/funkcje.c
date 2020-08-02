@@ -320,3 +320,33 @@ void calcTaxes(int population, budget** wallet) {
 		taxes = population * 1.5;
 	newWallet(taxes, wallet);
 }
+
+
+int printStartingMenu() {
+
+	int number = 0;
+	printf("Witaj w grze \"Miasto\"\n\nWybierz, co chcesz zrobic: \n");
+	printf("1. Nowa gra\n");
+	printf("2. Wczytaj gre\n");
+	printf("3. Wyjdz\n");
+
+	while (number < 1 || number > 3) {
+		gotoxy(0, 6);
+		printf("Wpisz swoj wybor:          ");
+		gotoxy(18, 6);
+		scanf_s("%d", &number);
+	}
+
+	return number;
+}
+
+chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
+	printf("Podaj rozmiar miasta (wysokosc i dlugosc po spacji): ");
+	scanf("%d %d", rows, cols);
+	board = createBoard(*rows, *cols);
+	(*wallet)->money = 50000;
+	return board;
+}
+
+void loadGame() {
+}

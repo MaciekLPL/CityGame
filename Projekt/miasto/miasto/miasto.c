@@ -10,15 +10,32 @@
 
 int main() {
 
-	ShowConsoleCursor(1);
+	int num = printStartingMenu();
+
+	int rows, cols;
+	chunk** board = NULL;
+	budget* wallet = calloc(1, sizeof(budget));
 	LARGE_INTEGER t1;
+
+	if (num == 1) {
+		board = newGame(&rows, &cols, board, &wallet);
+	}
+	else if (num == 2) {
+
+	}
+	else
+		return 0;
+
+	system("cls");
+	gotoxy(0, 0);
+	ShowConsoleCursor(1);
 	QueryPerformanceCounter(&t1);
 
-	int rows = 15, cols = 35;		//wielkoœc miasta
-	chunk** board = createBoard(rows, cols);
+	//int rows = 15, cols = 35;		//wielkoœæ miasta
+	//chunk** board = createBoard(rows, cols);
 
-	budget* wallet = calloc(1, sizeof(budget));
-	wallet->money = 50000;			//iloœæ pieniêdzy
+	//budget* wallet = calloc(1, sizeof(budget));
+	//wallet->money = 50000;			//iloœæ pieniêdzy
 
 	printBorders(rows, cols);		//granice miasta
 	printHelp(cols);				//pomoc
@@ -65,6 +82,17 @@ int main() {
 			else if (c == 'd') {
 				c = '\0';
 				setZone(board, x-1, y-1, c, &wallet);
+			}
+			else if (c == 'p') {
+				char decision = '\0';
+
+				while (decision != 't' && decision != 'n') {
+					system("cls");
+					gotoxy(0, 0);
+					printf("Czy chcesz zapisac postep? [t/n]:\n");
+					scanf("%c", &decision);
+				}
+
 			}
 			renderBoard(board, rows, cols, t1, wallet->money);
 		}

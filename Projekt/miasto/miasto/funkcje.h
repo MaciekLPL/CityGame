@@ -45,6 +45,10 @@ void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols);
 
 void calcTaxes(int population, budget** wallet);
 
+int printStartingMenu();
+
+chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet);
+
 
 #endif
 
