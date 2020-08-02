@@ -11,7 +11,7 @@ void printBorders(int rows, int cols);
 
 void printHelp(int cols);
 
-void arrowsHandling(int* x, int* y, int c, int rows, int cols);
+void arrowsHandling(int* x, int* y, int c, int maxx, int maxy, int minx, int miny);
 
 void ShowConsoleCursor(int showFlag);
 
@@ -49,6 +49,9 @@ int printStartingMenu();
 
 chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet);
 
+int exitGame();
+
+void saveGame();
 
 #endif
 

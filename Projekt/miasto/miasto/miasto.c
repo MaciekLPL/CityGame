@@ -17,12 +17,10 @@ int main() {
 	budget* wallet = calloc(1, sizeof(budget));
 	LARGE_INTEGER t1;
 
-	if (num == 1) {
+	if (num == 1)
 		board = newGame(&rows, &cols, board, &wallet);
-	}
-	else if (num == 2) {
-
-	}
+	else if (num == 2)
+		;
 	else
 		return 0;
 
@@ -31,22 +29,14 @@ int main() {
 	ShowConsoleCursor(1);
 	QueryPerformanceCounter(&t1);
 
-	//int rows = 15, cols = 35;		//wielkoœæ miasta
-	//chunk** board = createBoard(rows, cols);
-
-	//budget* wallet = calloc(1, sizeof(budget));
-	//wallet->money = 50000;			//iloœæ pieniêdzy
-
-	printBorders(rows, cols);		//granice miasta
+	printBorders(rows, cols);		//rysowanie granic miasta
 	printHelp(cols);				//pomoc
 
 	int x = 1, y = 1;
 	int timeLast = 0;
-	renderBoard(board, rows, cols, t1, wallet->money);				//wstêpne wyœwietlenie
-	printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols));
+	renderBoard(board, rows, cols, t1, wallet->money);				//wstêpne wyœwietlenie miasta
+	printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols));  //wstêpne wyœwietlenie menu
 	
-
-
 	while (1)
 	{
 		while (!_kbhit()) {
@@ -70,7 +60,7 @@ int main() {
 		int c = _getch();
 		if (c == 0xE0) {
 
-			arrowsHandling(&x, &y, c, rows, cols);
+			arrowsHandling(&x, &y, c, cols, rows, 1, 1);
 			printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols));
 		}
 		else {
@@ -84,16 +74,11 @@ int main() {
 				setZone(board, x-1, y-1, c, &wallet);
 			}
 			else if (c == 'p') {
-				char decision = '\0';
-
-				while (decision != 't' && decision != 'n') {
-					system("cls");
-					gotoxy(0, 0);
-					printf("Czy chcesz zapisac postep? [t/n]:\n");
-					scanf("%c", &decision);
-				}
-
+				if (exitGame() == 1)
+					saveGame();
+				return 0;
 			}
+
 			renderBoard(board, rows, cols, t1, wallet->money);
 		}
 		

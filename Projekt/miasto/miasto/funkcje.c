@@ -78,25 +78,27 @@ void printHelp(int cols) {
 	printf("r - Budowa dzielnicy przemyslowej");
 	gotoxy(cols + 3, 6);
 	printf("d - Burzenie");
+	gotoxy(cols + 3, 7);
+	printf("p - Wyjscie z gry");
 
 }
 
 
-void arrowsHandling(int* x, int* y, int c, int rows, int cols) {
+void arrowsHandling(int* x, int* y, int c, int maxx, int maxy, int minx, int miny) {
 	
 	c = _getch();
 	switch (c) {
 	case 0x4B:
-		if (*x != 1) (*x)--;
+		if (*x != minx) (*x)--;
 		break;
 	case 0x4D:
-		if (*x != cols) (*x)++;
+		if (*x != maxx) (*x)++;
 		break;
 	case 0x48:
-		if (*y != 1) (*y)--;
+		if (*y != miny) (*y)--;
 		break;
 	case 0x50:
-		if (*y != rows) (*y)++;
+		if (*y != maxy) (*y)++;
 		break;
 	default:
 		break;
@@ -324,29 +326,58 @@ void calcTaxes(int population, budget** wallet) {
 
 int printStartingMenu() {
 
-	int number = 0;
 	printf("Witaj w grze \"Miasto\"\n\nWybierz, co chcesz zrobic: \n");
-	printf("1. Nowa gra\n");
-	printf("2. Wczytaj gre\n");
-	printf("3. Wyjdz\n");
+	printf(" 1. Nowa gra\n");
+	printf(" 2. Wczytaj gre\n");
+	printf(" 3. Wyjdz\n");
+	int x = 1, y = 3;
+	gotoxy(x, y);
 
-	while (number < 1 || number > 3) {
-		gotoxy(0, 6);
-		printf("Wpisz swoj wybor:          ");
-		gotoxy(18, 6);
-		scanf_s("%d", &number);
+	while (1) {
+		int c = _getch();
+		if (c == 0xE0)
+			arrowsHandling(&x, &y, c, 1, 5, 1, 3);
+		else if (c == 13)
+			return y - 2;
+		gotoxy(x, y);
 	}
-
-	return number;
 }
 
 chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
-	printf("Podaj rozmiar miasta (wysokosc i dlugosc po spacji): ");
-	scanf("%d %d", rows, cols);
+
+	system("cls");
+	printf("Podaj rozmiar miasta\n");
+	printf("Szerokosc: ");
+	scanf("%d", rows);
+	printf("Wysokosc: ");
+	scanf("%d", cols);
 	board = createBoard(*rows, *cols);
 	(*wallet)->money = 50000;
 	return board;
 }
 
-void loadGame() {
+void saveGame() {
+
 }
+
+int exitGame() {
+
+	system("cls");
+	printf("Czy chcesz zapisac gre?\n\n");
+	printf(" 1. Tak\n");
+	printf(" 2. Nie\n");
+	int x = 1, y = 2;
+	gotoxy(x, y);
+
+	while (1) {
+		int c = _getch();
+		if (c == 0xE0)
+			arrowsHandling(&x, &y, c, 1, 3, 1, 2);
+
+		else if (c == 13)
+			return y - 1;
+			
+		gotoxy(x, y);
+	}
+}
+
