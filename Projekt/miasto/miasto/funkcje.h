@@ -21,11 +21,11 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols);
 
 void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money);
 
-double getTime(LARGE_INTEGER t1);
+double getTime(LARGE_INTEGER t1, int time);
 
 int countPopulation(chunk** board, int rows, int cols);
 
-void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money, int population);
+void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money, int population, int time);
 
 void buildRoad(chunk** board, int x, int y, budget** wallet);
 
@@ -49,9 +49,18 @@ int printStartingMenu();
 
 chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet);
 
+chunk** loadGame(int* rows, int* cols, budget** wallet, int* time);
+
+void saveBudget(FILE** file, budget* wallet);
+
+void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave);
+
+void deleteBoard(chunk** board, int rows);
+
+void freeBudget(budget* wallet);
+
 int exitGame();
 
-void saveGame();
 
 #endif
 

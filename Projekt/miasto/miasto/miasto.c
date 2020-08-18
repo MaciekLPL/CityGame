@@ -7,20 +7,25 @@
 
 #include "funkcje.h"
 #include "struktury.h"
+#include "memorilo.h"
+#include <stdlib.h>
+#include <crtdbg.h>
+
 
 int main() {
-
 	int num = printStartingMenu();
 
 	int rows, cols;
 	chunk** board = NULL;
-	budget* wallet = calloc(1, sizeof(budget));
+	budget* wallet = (budget*)malloc(sizeof(budget));
 	LARGE_INTEGER t1;
+	int time = 0;
 
-	if (num == 1)
+	if (num == 1) {
 		board = newGame(&rows, &cols, board, &wallet);
+	}
 	else if (num == 2)
-		;
+		board = loadGame(&rows, &cols, &wallet, &time);
 	else
 		return 0;
 
@@ -35,13 +40,13 @@ int main() {
 	int x = 1, y = 1;
 	int timeLast = 0;
 	renderBoard(board, rows, cols, t1, wallet->money);				//wstêpne wyœwietlenie miasta
-	printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols));  //wstêpne wyœwietlenie menu
+	printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols), time);  //wstêpne wyœwietlenie menu
 	
 	while (1)
 	{
 		while (!_kbhit()) {
 
-			int timeNow = (int)getTime(t1);
+			int timeNow = (int)getTime(t1, time);
 			int population = countPopulation(board, rows, cols);
 
 			if (timeNow != timeLast) {				//ograniczenie odœwie¿ania, w ka¿dym nowym dniu podatki + sprawdzanie atrakcyjnoœci/populacji
@@ -51,7 +56,7 @@ int main() {
 				}
 
 				renderBoard(board, rows, cols, t1, wallet->money);
-				printMenu(board, rows, cols, t1, wallet->money, population);
+				printMenu(board, rows, cols, t1, wallet->money, population, time);
 				timeLast = timeNow;
 			}
 			gotoxy(x, y);
@@ -61,7 +66,7 @@ int main() {
 		if (c == 0xE0) {
 
 			arrowsHandling(&x, &y, c, cols, rows, 1, 1);
-			printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols));
+			printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols), time);
 		}
 		else {
 
@@ -74,13 +79,16 @@ int main() {
 				setZone(board, x-1, y-1, c, &wallet);
 			}
 			else if (c == 'p') {
-				if (exitGame() == 1)
-					saveGame();
+				if (exitGame() == 1) {
+					int timeToSave = (int)getTime(t1, time);
+					saveGame(board, &rows, &cols, wallet, &timeToSave);
+				}
+				deleteBoard(board, rows);
+				freeBudget(wallet);
+				wallet = NULL;
 				return 0;
 			}
-
 			renderBoard(board, rows, cols, t1, wallet->money);
 		}
-		
 	}
 }

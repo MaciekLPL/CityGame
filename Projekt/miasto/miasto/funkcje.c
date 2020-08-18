@@ -11,6 +11,7 @@
 #define RST "\x1B[0m"
 
 #include "struktury.h"
+#include "memorilo.h"
 
 void ShowConsoleCursor(int showFlag) {
 
@@ -19,7 +20,6 @@ void ShowConsoleCursor(int showFlag) {
 	cursorInfo.dwSize = 100;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 }
-
 
 void gotoxy(int x, int y) {
 
@@ -31,10 +31,10 @@ void gotoxy(int x, int y) {
 
 chunk** createBoard(int rows, int cols) {
 
-	chunk** board = calloc(rows, sizeof(chunk*));
+	chunk** board = malloc(rows * sizeof(chunk*));
 
 	for (int i = 0; i < rows; i++) {
-		board[i] = calloc(cols, sizeof(chunk));
+		board[i] = malloc(rows * sizeof(chunk));
 	}
 
 	for (int i = 0; i < rows; i++) {
@@ -63,7 +63,6 @@ void printBorders(int rows, int cols) {
 	putc(186, stdout);
 }
 
-
 void printHelp(int cols) {
 
 	gotoxy(cols + 3, 1);
@@ -82,7 +81,6 @@ void printHelp(int cols) {
 	printf("p - Wyjscie z gry");
 
 }
-
 
 void arrowsHandling(int* x, int* y, int c, int maxx, int maxy, int minx, int miny) {
 	
@@ -105,14 +103,12 @@ void arrowsHandling(int* x, int* y, int c, int maxx, int maxy, int minx, int min
 	}
 }
 
-
 bool isValid(int x, int y, int rows, int cols) {			//x kolumny(j), y wiersze(i)
 
 	if ((x >= 0 && x < cols) && (y >= 0 && y < rows))		//czy pole le¿y w obrêbie planszy
 		return 1;
 	return 0;
 }
-
 
 int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 
@@ -147,7 +143,6 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 	return c;
 }
 
-
 void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols) {
 
 	for (int i = r - 2; i <= r + 2; i++) {
@@ -161,7 +156,6 @@ void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols) 
 		gotoxy(1, i + 2);
 	}
 }
-
 
 void checkNeigboursService(chunk** board, int r, int c, int rows, int cols) {
 
@@ -179,7 +173,6 @@ void checkNeigboursService(chunk** board, int r, int c, int rows, int cols) {
 	}
 }
 
-
 void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols) {
 
 	for (int i = r - 2; i <= r + 2; i++) {
@@ -195,7 +188,6 @@ void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols) {
 		gotoxy(1, i + 2);
 	}
 }
-
 
 void checkAttractiveness(chunk** board, int rows, int cols) {
 
@@ -220,12 +212,12 @@ void checkAttractiveness(chunk** board, int rows, int cols) {
 }
 
 
-double getTime(LARGE_INTEGER t1) {
+double getTime(LARGE_INTEGER t1, int time) {
 
 	LARGE_INTEGER freq, t2;
 	QueryPerformanceCounter(&t2);
 	QueryPerformanceFrequency(&freq);
-	return (t2.QuadPart - t1.QuadPart) / (double)freq.QuadPart;
+	return ((t2.QuadPart - t1.QuadPart) / (double)freq.QuadPart) + time;
 }
 
 
@@ -239,15 +231,14 @@ int countPopulation(chunk** board, int rows, int cols) {
 	return population;
 }
 
-void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money, int population) {
-	double elapsedTime = getTime(t1);
+void printMenu(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money, int population, int time) {
+	double elapsedTime = getTime(t1, time);
 
 	gotoxy(0, rows + 3);
 	printf("Dzien: %d \nGodzina: %02d \n", (int)(elapsedTime / 24), (int)elapsedTime % 24);
 	printf("Budzet: %-20d\n", money);
 	printf("Populacja: %-20d", population);
 }
-
 
 void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money) {
 	
@@ -281,26 +272,24 @@ void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money)
 	ShowConsoleCursor(1);
 }
 
-
 void newWallet(int diff, budget** wallet) {
 
 	budget* new_wallet;
-	new_wallet = (budget*)calloc(1, sizeof(budget));
+	new_wallet = (budget*)malloc(sizeof(budget));
 
 	new_wallet->money = (*wallet)->money + diff;
 	new_wallet->next = *wallet;
 	*wallet = new_wallet;
 }
 
-
 void buildRoad(chunk** board, int x, int y, struct budget** wallet) {
 
 	if ((*wallet)->money >= 2000 && board[y][x].c != 'q') {
 		newWallet(-2000, wallet);
 		board[y][x].c = 'q';
+		board[y][x].population = 0;
 	}
 }
-
 
 void setZone(chunk** board, int x, int y, int c, struct budget** wallet) {
 	if (board[y][x].c != c) {
@@ -313,16 +302,14 @@ void setZone(chunk** board, int x, int y, int c, struct budget** wallet) {
 	board[y][x].c = c;
 }
 
-
 void calcTaxes(int population, budget** wallet) {
 	int taxes = 0;
 	if (population < 2000)
-		taxes = population * 3;
+		taxes = population * 4;
 	else
-		taxes = population * 1.5;
+		taxes = population * 2;
 	newWallet(taxes, wallet);
 }
-
 
 int printStartingMenu() {
 
@@ -345,19 +332,88 @@ int printStartingMenu() {
 
 chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
 
+	bool width = false, height = false;
+	int clr;
 	system("cls");
 	printf("Podaj rozmiar miasta\n");
-	printf("Szerokosc: ");
-	scanf("%d", rows);
-	printf("Wysokosc: ");
-	scanf("%d", cols);
+
+	while (!width) {
+		printf("Szerokosc: ");
+		if (scanf("%d", cols))
+			width = true;
+		while (clr = getchar() != '\n');
+	}
+	while (!height) {
+		printf("Wysokosc: ");
+		if (scanf("%d", rows))
+			height = true;
+		while (clr = getchar() != '\n');
+	}
 	board = createBoard(*rows, *cols);
+	(*wallet)->next = NULL;
 	(*wallet)->money = 50000;
 	return board;
 }
 
-void saveGame() {
+void saveBudget(FILE** file, budget* wallet) {
+	budget* temp = wallet;
+	if (temp == NULL)
+		return;
+	saveBudget(file, wallet->next);
+	fwrite(&wallet->money, sizeof(int), 1, (*file));
+}
 
+void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave) {
+
+	char saveName[20] = "";
+	system("cls");
+	printf("Podaj nazwe zapisu: ");
+	scanf("%s", &saveName);
+
+	if (strcmp(strrchr(saveName, '\0') - 4, ".bin"))
+		strcat(saveName, ".bin");
+
+	FILE* file = fopen(saveName, "wb");
+	fwrite(rows, sizeof(int), 1, file);
+	fwrite(cols, sizeof(int), 1, file);
+	fwrite(timeToSave, sizeof(LARGE_INTEGER), 1, file);
+
+	for (int i = 0; i < (*rows); i++) {
+		for (int j = 0; j < (*cols); j++)
+			fwrite(&board[i][j], sizeof(chunk), 1, file);
+	}
+
+	saveBudget(&file, wallet);
+	fclose(file);
+}
+
+
+chunk** loadGame(int* rows, int* cols, budget** wallet, int* time) {
+
+	FILE* file = fopen("test.bin", "rb");
+	fread(rows, sizeof(int), 1, file);
+	fread(cols, sizeof(int), 1, file);
+	fread(time, sizeof(LARGE_INTEGER), 1, file);
+
+	chunk** board = createBoard((*rows), (*cols));
+
+	for (int i = 0; i < (*rows); i++) {
+		for (int j = 0; j < (*cols); j++)
+			fread(&board[i][j], sizeof(chunk), 1, file);
+	}
+
+	int val = 0;
+	fread(&(*wallet)->money, sizeof(int), 1, file);
+	(*wallet)->next = NULL;
+	while (fread(&val, sizeof(int), 1, file) == 1) {
+		budget* new_wallet;
+		new_wallet = (budget*)malloc(sizeof(budget));
+		new_wallet->money = val;
+		new_wallet->next = *wallet;
+		*wallet = new_wallet;
+	}
+
+	return board;
 }
 
 int exitGame() {
@@ -371,13 +427,28 @@ int exitGame() {
 
 	while (1) {
 		int c = _getch();
+
 		if (c == 0xE0)
 			arrowsHandling(&x, &y, c, 1, 3, 1, 2);
-
 		else if (c == 13)
 			return y - 1;
 			
 		gotoxy(x, y);
+	}
+}
+
+void deleteBoard(chunk** board, int rows) {
+	for (int i = 0; i < rows; i++)
+		free(board[i]);
+	free(board);
+}
+
+void freeBudget(budget* wallet) {
+
+	while (wallet != NULL) {
+		budget* temp = wallet;
+		wallet = wallet->next;
+		free(temp);
 	}
 }
 
