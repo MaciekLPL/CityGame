@@ -129,7 +129,7 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 	if (j == cols / 2 && i == rows - 1)		//wyjazd
 		s = 1;
 
-	int c = 186;
+	int c = 186;							//³¹czenie dróg (dobieranie odpowiedniego znaku ascii)
 	if (n & e & s & w) c = 206;
 	else if (n & s & w) c = 185;
 	else if (n & e & w) c = 202;
@@ -245,8 +245,8 @@ void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money)
 	ShowConsoleCursor(0);
 	gotoxy(1, 1);
 
-	for (int i = 0; i < rows; ++i) {
-		for (int j = 0; j < cols; ++j) {
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
 
 			if (board[i][j].c == 'q')
 				printf("%c", drawRoad(board, i, j, rows, cols));
@@ -274,9 +274,7 @@ void renderBoard(chunk** board, int rows, int cols, LARGE_INTEGER t1, int money)
 
 void newWallet(int diff, budget** wallet) {
 
-	budget* new_wallet;
-	new_wallet = (budget*)malloc(sizeof(budget));
-
+	budget* new_wallet = (budget*)malloc(sizeof(budget));
 	new_wallet->money = (*wallet)->money + diff;
 	new_wallet->next = *wallet;
 	*wallet = new_wallet;
@@ -350,8 +348,9 @@ chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
 		while (clr = getchar() != '\n');
 	}
 	board = createBoard(*rows, *cols);
-	(*wallet)->next = NULL;
+	(*wallet) = (budget*)malloc(sizeof(budget));
 	(*wallet)->money = 50000;
+	(*wallet)->next = NULL;
 	return board;
 }
 
@@ -365,12 +364,12 @@ void saveBudget(FILE** file, budget* wallet) {
 
 void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave) {
 
-	char saveName[20] = "";
+	char saveName[50] = "";
 	system("cls");
 	printf("Podaj nazwe zapisu: ");
 	scanf("%s", &saveName);
 
-	if (strcmp(strrchr(saveName, '\0') - 4, ".bin"))
+	if (strcmp(strrchr(saveName, '\0') - 4, ".bin"))				//dodanie rozszerzenia, je¿eli go nie ma
 		strcat(saveName, ".bin");
 
 	FILE* file = fopen(saveName, "wb");
@@ -378,7 +377,7 @@ void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSa
 	fwrite(cols, sizeof(int), 1, file);
 	fwrite(timeToSave, sizeof(LARGE_INTEGER), 1, file);
 
-	for (int i = 0; i < (*rows); i++) {
+	for (int i = 0; i < (*rows); i++) {								//zapisanie tablicy
 		for (int j = 0; j < (*cols); j++)
 			fwrite(&board[i][j], sizeof(chunk), 1, file);
 	}
@@ -386,7 +385,6 @@ void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSa
 	saveBudget(&file, wallet);
 	fclose(file);
 }
-
 
 chunk** loadGame(int* rows, int* cols, budget** wallet, int* time) {
 
@@ -403,16 +401,13 @@ chunk** loadGame(int* rows, int* cols, budget** wallet, int* time) {
 	}
 
 	int val = 0;
-	fread(&(*wallet)->money, sizeof(int), 1, file);
-	(*wallet)->next = NULL;
+
 	while (fread(&val, sizeof(int), 1, file) == 1) {
-		budget* new_wallet;
-		new_wallet = (budget*)malloc(sizeof(budget));
+		budget* new_wallet = (budget*)malloc(sizeof(budget));
 		new_wallet->money = val;
 		new_wallet->next = *wallet;
 		*wallet = new_wallet;
 	}
-
 	return board;
 }
 
@@ -426,18 +421,19 @@ int exitGame() {
 	gotoxy(x, y);
 
 	while (1) {
-		int c = _getch();
 
+		int c = _getch();
 		if (c == 0xE0)
 			arrowsHandling(&x, &y, c, 1, 3, 1, 2);
 		else if (c == 13)
 			return y - 1;
-			
+		
 		gotoxy(x, y);
 	}
 }
 
 void deleteBoard(chunk** board, int rows) {
+
 	for (int i = 0; i < rows; i++)
 		free(board[i]);
 	free(board);

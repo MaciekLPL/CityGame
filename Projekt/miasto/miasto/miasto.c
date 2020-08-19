@@ -8,8 +8,6 @@
 #include "funkcje.h"
 #include "struktury.h"
 #include "memorilo.h"
-#include <stdlib.h>
-#include <crtdbg.h>
 
 
 int main() {
@@ -17,13 +15,12 @@ int main() {
 
 	int rows, cols;
 	chunk** board = NULL;
-	budget* wallet = (budget*)malloc(sizeof(budget));
+	budget* wallet = NULL;
 	LARGE_INTEGER t1;
 	int time = 0;
 
-	if (num == 1) {
+	if (num == 1)
 		board = newGame(&rows, &cols, board, &wallet);
-	}
 	else if (num == 2)
 		board = loadGame(&rows, &cols, &wallet, &time);
 	else
@@ -85,7 +82,6 @@ int main() {
 				}
 				deleteBoard(board, rows);
 				freeBudget(wallet);
-				wallet = NULL;
 				return 0;
 			}
 			renderBoard(board, rows, cols, t1, wallet->money);
