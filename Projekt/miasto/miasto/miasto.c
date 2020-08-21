@@ -11,7 +11,6 @@
 
 
 int main() {
-	int num = printStartingMenu();
 
 	int rows, cols;
 	chunk** board = NULL;
@@ -19,15 +18,23 @@ int main() {
 	LARGE_INTEGER t1;
 	int time = 0;
 
-	if (num == 1)
-		board = newGame(&rows, &cols, board, &wallet);
-	else if (num == 2)
-		board = loadGame(&rows, &cols, &wallet, &time);
-	else
-		return 0;
+	while (board == NULL) {
 
-	system("cls");
-	gotoxy(0, 0);
+		switch (printStartingMenu()) {
+		case 1:
+			board = newGame(&rows, &cols, board, &wallet);
+			break;
+		case 2:
+			board = loadGame(&rows, &cols, &wallet, &time);
+			break;
+		default:
+			return 0;
+		}
+
+		system("cls");
+		gotoxy(0, 0);
+	}
+
 	ShowConsoleCursor(1);
 	QueryPerformanceCounter(&t1);
 
@@ -76,11 +83,12 @@ int main() {
 				setZone(board, x-1, y-1, c, &wallet);
 			}
 			else if (c == 'p') {
+
 				if (exitGame() == 1) {
 					int timeToSave = (int)getTime(t1, time);
 					saveGame(board, &rows, &cols, wallet, &timeToSave);
 				}
-				deleteBoard(board, rows);
+				freeBoard(board, rows);
 				freeBudget(wallet);
 				return 0;
 			}

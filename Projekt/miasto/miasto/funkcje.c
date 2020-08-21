@@ -34,7 +34,7 @@ chunk** createBoard(int rows, int cols) {
 	chunk** board = malloc(rows * sizeof(chunk*));
 
 	for (int i = 0; i < rows; i++) {
-		board[i] = malloc(rows * sizeof(chunk));
+		board[i] = malloc(cols * sizeof(chunk));
 	}
 
 	for (int i = 0; i < rows; i++) {
@@ -362,17 +362,29 @@ void saveBudget(FILE** file, budget* wallet) {
 	fwrite(&wallet->money, sizeof(int), 1, (*file));
 }
 
-void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave) {
 
-	char saveName[50] = "";
+void getSaveName(char* saveName) {
+
 	system("cls");
 	printf("Podaj nazwe zapisu: ");
-	scanf("%s", &saveName);
+	scanf("%s", saveName);
 
 	if (strcmp(strrchr(saveName, '\0') - 4, ".bin"))				//dodanie rozszerzenia, je¿eli go nie ma
 		strcat(saveName, ".bin");
+}
+
+void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave) {
+
+	char saveName[50] = "";
+	char checkString[] = "Miasto";
+	getSaveName(saveName);
 
 	FILE* file = fopen(saveName, "wb");
+
+	if (file == NULL)
+		saveGame(board, rows, cols, wallet, timeToSave);
+
+	fwrite(&checkString, sizeof(char), 7, file);
 	fwrite(rows, sizeof(int), 1, file);
 	fwrite(cols, sizeof(int), 1, file);
 	fwrite(timeToSave, sizeof(LARGE_INTEGER), 1, file);
@@ -386,23 +398,44 @@ void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSa
 	fclose(file);
 }
 
+bool validateFile(FILE** file) {
+
+	if ((*file) == NULL)			//czy plik siê otworzy³
+		return false;
+
+	char checkString[7] = "";
+	if (fread(&checkString, sizeof(char), 7, (*file)) == 7) {
+		if (!strcmp(checkString, "Miasto"))							//czy ma kontrolnego stringa
+			return true;
+	}
+
+	fclose(*file);
+	return false;
+}
+
 chunk** loadGame(int* rows, int* cols, budget** wallet, int* time) {
 
-	FILE* file = fopen("test.bin", "rb");
+	char saveName[50] = "";
+	getSaveName(saveName);
+
+	FILE* file = fopen(saveName, "rb");
+
+	if (!validateFile(&file))
+		return NULL;
+
 	fread(rows, sizeof(int), 1, file);
 	fread(cols, sizeof(int), 1, file);
 	fread(time, sizeof(LARGE_INTEGER), 1, file);
 
-	chunk** board = createBoard((*rows), (*cols));
+	chunk** board = createBoard((*rows), (*cols));				//alokacja tablicy
 
-	for (int i = 0; i < (*rows); i++) {
+	for (int i = 0; i < (*rows); i++) {							//odczyt tablicy
 		for (int j = 0; j < (*cols); j++)
 			fread(&board[i][j], sizeof(chunk), 1, file);
 	}
 
 	int val = 0;
-
-	while (fread(&val, sizeof(int), 1, file) == 1) {
+	while (fread(&val, sizeof(int), 1, file) == 1) {			//odczyt bud¿etu
 		budget* new_wallet = (budget*)malloc(sizeof(budget));
 		new_wallet->money = val;
 		new_wallet->next = *wallet;
@@ -432,7 +465,7 @@ int exitGame() {
 	}
 }
 
-void deleteBoard(chunk** board, int rows) {
+void freeBoard(chunk** board, int rows) {
 
 	for (int i = 0; i < rows; i++)
 		free(board[i]);

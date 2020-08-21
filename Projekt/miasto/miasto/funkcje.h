@@ -47,7 +47,11 @@ void calcTaxes(int population, budget** wallet);
 
 int printStartingMenu();
 
+void getSaveName(char* saveName);
+
 chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet);
+
+bool validateFile(FILE** file);
 
 chunk** loadGame(int* rows, int* cols, budget** wallet, int* time);
 
@@ -55,7 +59,7 @@ void saveBudget(FILE** file, budget* wallet);
 
 void saveGame(chunk** board, int* rows, int* cols, budget* wallet, int* timeToSave);
 
-void deleteBoard(chunk** board, int rows);
+void freeBoard(chunk** board, int rows);
 
 void freeBudget(budget* wallet);
 
