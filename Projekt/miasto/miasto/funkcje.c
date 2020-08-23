@@ -7,9 +7,17 @@
 #include <time.h>
 #include <math.h>
 
+/*! \def GRN
+	\brief Kolor zielony */
 #define GRN   "\x1B[32m"
+/*! \def YEL
+	\brief Kolor ¿ó³ty */
 #define YEL   "\x1B[33m"
+/*! \def BLU
+	\brief Kolor niebieski */
 #define BLU   "\x1B[34m"
+/*! \def RST
+	\brief Kolor podstawowy */
 #define RST "\x1B[0m"
 
 #include "struktury.h"

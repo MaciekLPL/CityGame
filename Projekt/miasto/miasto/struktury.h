@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 /*! \struct chunk
-	\brief Reprezentacja pojedynczego pola na planszy*/
+	\brief Struktura reprezentuj¹ca pojedyncze pole na planszy*/
 typedef struct chunk {
 	int c; /*!< Reprezentacja pola przez kod ascii */
 	int population; /*!< Populacja pola*/
