@@ -1,3 +1,5 @@
+/*! \file
+	\brief Plik zawiera definicje funkcji*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
@@ -328,7 +330,7 @@ int printStartingMenu() {
 	}
 }
 
-chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
+chunk** newGame(int* rows, int* cols, budget** wallet) {
 
 	bool width = false, height = false;
 	int clr;
@@ -347,7 +349,7 @@ chunk** newGame(int* rows, int* cols, chunk** board, budget** wallet) {
 			height = true;
 		while (clr = getchar() != '\n');
 	}
-	board = createBoard(*rows, *cols);
+	chunk** board = createBoard(*rows, *cols);
 	(*wallet) = (budget*)malloc(sizeof(budget));
 	(*wallet)->money = 50000;
 	(*wallet)->next = NULL;
@@ -361,7 +363,6 @@ void saveBudget(FILE** file, budget* wallet) {
 	saveBudget(file, wallet->next);
 	fwrite(&wallet->money, sizeof(int), 1, (*file));
 }
-
 
 void getSaveName(char* saveName) {
 

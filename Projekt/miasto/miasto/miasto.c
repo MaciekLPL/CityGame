@@ -1,9 +1,10 @@
+/*! \file
+	\brief Plik zawiera g³ówn¹ funkcjê gry */
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
 #include <windows.h>
 #include <time.h>
-#include <math.h>
 
 #include "funkcje.h"
 #include "struktury.h"
@@ -22,7 +23,7 @@ int main() {
 
 		switch (printStartingMenu()) {
 		case 1:
-			board = newGame(&rows, &cols, board, &wallet);
+			board = newGame(&rows, &cols, &wallet);
 			break;
 		case 2:
 			board = loadGame(&rows, &cols, &wallet, &time);
@@ -46,7 +47,7 @@ int main() {
 	renderBoard(board, rows, cols, t1, wallet->money);				//wstêpne wyœwietlenie miasta
 	printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols), time);  //wstêpne wyœwietlenie menu
 	
-	while (1)
+	while (1)						//g³ówna pêtla programu
 	{
 		while (!_kbhit()) {
 
@@ -68,12 +69,11 @@ int main() {
 
 		int c = _getch();
 		if (c == 0xE0) {
-
 			arrowsHandling(&x, &y, c, cols, rows, 1, 1);
 			printMenu(board, rows, cols, t1, wallet->money, countPopulation(board, rows, cols), time);
 		}
-		else {
 
+		else {
 			if (c == 'q')
 				buildRoad(board, x-1, y-1, &wallet);
 			else if (c == 'w' || c == 'e' || c == 'r')
@@ -83,11 +83,11 @@ int main() {
 				setZone(board, x-1, y-1, c, &wallet);
 			}
 			else if (c == 'p') {
-
 				if (exitGame() == 1) {
 					int timeToSave = (int)getTime(t1, time);
 					saveGame(board, &rows, &cols, wallet, &timeToSave);
 				}
+
 				freeBoard(board, rows);
 				freeBudget(wallet);
 				return 0;

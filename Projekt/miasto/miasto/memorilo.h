@@ -1,4 +1,5 @@
-
+/*! \file
+    \brief Plik wykrywacza wycieków pamiêci*/
 #ifndef MEMORILO_H
 #define MEMORILO_H
 

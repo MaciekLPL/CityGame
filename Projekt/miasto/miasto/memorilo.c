@@ -1,3 +1,5 @@
+/*! \file
+    \brief Plik wykrywacza wycieków pamiêci */
 #include <stdlib.h>
 #include <stdio.h>
 
