@@ -89,7 +89,8 @@ void printHelp(int cols) {
 	printf("d - Burzenie");
 	gotoxy(cols + 3, 7);
 	printf("p - Wyjscie z gry");
-
+	gotoxy(cols + 3, 8);
+	printf("Wszystkie dzielnice musza miec polaczenie z droga");
 }
 
 void arrowsHandling(int* x, int* y, int c, int maxx, int maxy, int minx, int miny) {
@@ -153,50 +154,35 @@ int drawRoad(chunk** board, int i, int j, int rows, int cols) {
 	return c;
 }
 
-void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols) {
+bool checkNeighbours(chunk** board, int character, int r, int c, int rows, int cols) {
 
+	int res, srv, ind;
+	if (character == 'w')									//atrakcyjnoœæ pola
+		res = 1, srv = 2, ind = -3;
+	else if(character == 'e')
+		res = 2, srv = -1, ind = 1;
+	else
+		res = -1, srv = 1, ind = 1;
+	
+	bool road = false;
 	for (int i = r - 2; i <= r + 2; i++) {
 		for (int j = c - 2; j <= c + 2; j++) {
-			if (isValid(j, i, rows, cols))
-				if (board[i][j].c == 'e')
-					board[r][c].attractiveness += 2;
-				else if (board[i][j].c == 'r')
-					board[r][c].attractiveness -= 2;
-		}
-		gotoxy(1, i + 2);
-	}
-}
-
-void checkNeigboursService(chunk** board, int r, int c, int rows, int cols) {
-
-	for (int i = r - 2; i <= r + 2; i++) {
-		for (int j = c - 2; j <= c + 2; j++) {
-			if (isValid(j, i, rows, cols))
+			if (isValid(j, i, rows, cols)) {
 				if (board[i][j].c == 'w')
-					board[r][c].attractiveness += 2;
+					board[r][c].attractiveness += res;
 				else if (board[i][j].c == 'e')
-					board[r][c].attractiveness -= 1;
+					board[r][c].attractiveness += srv;
 				else if (board[i][j].c == 'r')
-					board[r][c].attractiveness += 1;
+					board[r][c].attractiveness += ind;
+				if ((i == r - 1 && j == c) || (i == r + 1 && j == c) ||  (i == r && j == c - 1) || (i == r && j == c + 1)) {			//sprawdzanie po³¹czenia z drog¹
+					if (board[i][j].c == 'q')
+						road = true;
+				}
+			}
 		}
 		gotoxy(1, i + 2);
 	}
-}
-
-void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols) {
-
-	for (int i = r - 2; i <= r + 2; i++) {
-		for (int j = c - 2; j <= c + 2; j++) {
-			if (isValid(j, i, rows, cols))
-				if (board[i][j].c == 'w')
-					board[r][c].attractiveness -= 1;
-				else if (board[i][j].c == 'e')
-					board[r][c].attractiveness += 1;
-				else if (board[i][j].c == 'r')
-					board[r][c].attractiveness += 1;
-		}
-		gotoxy(1, i + 2);
-	}
+	return(road);
 }
 
 void checkAttractiveness(chunk** board, int rows, int cols) {
@@ -206,12 +192,12 @@ void checkAttractiveness(chunk** board, int rows, int cols) {
 			if (board[i][j].c == 'w' || board[i][j].c == 'e' || board[i][j].c == 'r') {
 
 				board[i][j].attractiveness = 0;
-
-				if (board[i][j].c == 'w') checkNeigboursResidential(board, i, j, rows, cols);
-				else if (board[i][j].c == 'e') checkNeigboursService(board, i, j, rows, cols);
-				else if (board[i][j].c == 'r') checkNeigboursIndustrial(board, i, j, rows, cols);
-
-				board[i][j].population += board[i][j].attractiveness;
+				if (board[i][j].c == 'w' || board[i][j].c == 'e' || board[i][j].c == 'r') {
+					if (checkNeighbours(board, board[i][j].c, i, j, rows, cols))
+						board[i][j].population += board[i][j].attractiveness;
+					else
+						board[i][j].population = 0;
+				}
 
 				if (board[i][j].population < 0) board[i][j].population = 0;
 				if (board[i][j].population > 100) board[i][j].population = 100;
@@ -221,7 +207,6 @@ void checkAttractiveness(chunk** board, int rows, int cols) {
 	}
 }
 
-
 double getTime(LARGE_INTEGER t1, int time) {
 
 	LARGE_INTEGER freq, t2;
@@ -229,7 +214,6 @@ double getTime(LARGE_INTEGER t1, int time) {
 	QueryPerformanceFrequency(&freq);
 	return ((t2.QuadPart - t1.QuadPart) / (double)freq.QuadPart) + time;
 }
-
 
 int countPopulation(chunk** board, int rows, int cols) {
 	int population = 0;

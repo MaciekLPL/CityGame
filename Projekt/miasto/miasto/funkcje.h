@@ -71,35 +71,16 @@ bool isValid(int x, int y, int rows, int cols);
 	\return Liczba reprezentuj¹ca kod ASCII rozpatrywanego pola */
 int drawRoad(chunk** board, int i, int j, int rows, int cols);
 
-/*! \fn void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols)
-	\brief Funkcja sprawdzaj¹ca s¹siednie pola strefy mieszkalnej, aby ustaliæ wspó³czynnik atrakcyjnoœci.
+/*! \fn bool checkNeighbours(chunk** board, int character, int r, int c, int rows, int cols)
+	\brief Funkcja sprawdzaj¹ca s¹siednie pola strefy, aby ustaliæ wspó³czynnik atrakcyjnoœci.
 	\param board Plansza
+	\param character Znak reprezentuj¹cy dane pole
 	\param r Wspó³rzêdna Y na planszy
 	\param c Wspó³rzêdna X na planszy
 	\param rows Liczba rzêdów planszy
 	\param cols Liczba kolumn planszy
 	\return Funkcja nic nie zwraca. */
-void checkNeigboursResidential(chunk** board, int r, int c, int rows, int cols);
-
-/*! \fn void checkNeigboursService(chunk** board, int r, int c, int rows, int cols)
-	\brief Funkcja sprawdzaj¹ca s¹siednie pola strefy us³ugowej, aby ustaliæ wspó³czynnik atrakcyjnoœci.
-	\param board Plansza
-	\param r Wspó³rzêdna Y na planszy
-	\param c Wspó³rzêdna X na planszy
-	\param rows Liczba rzêdów planszy
-	\param cols Liczba kolumn planszy
-	\return Funkcja nic nie zwraca. */
-void checkNeigboursService(chunk** board, int r, int c, int rows, int cols);
-
-/*! \fn void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols)
-	\brief Funkcja sprawdzaj¹ca s¹siednie pola strefy przemys³owej, aby ustaliæ wspó³czynnik atrakcyjnoœci.
-	\param board Plansza
-	\param r Wspó³rzêdna Y na planszy
-	\param c Wspó³rzêdna X na planszy
-	\param rows Liczba rzêdów planszy
-	\param cols Liczba kolumn planszy
-	\return Funkcja nic nie zwraca. */
-void checkNeigboursIndustrial(chunk** board, int r, int c, int rows, int cols);
+bool checkNeighbours(chunk** board, int character, int r, int c, int rows, int cols);
 
 /*! \fn void checkAttractiveness(chunk** board, int rows, int cols)
 	\brief Funkcja wywo³uj¹ca sprawdzanie atrakcyjnoœci oraz aktualizacjê populacji na danym polu.
