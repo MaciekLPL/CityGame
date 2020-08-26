@@ -89,7 +89,7 @@ void printHelp(int cols) {
 	printf("d - Burzenie");
 	gotoxy(cols + 3, 7);
 	printf("p - Wyjscie z gry");
-	gotoxy(cols + 3, 8);
+	gotoxy(cols + 3, 9);
 	printf("Wszystkie dzielnice musza miec polaczenie z droga");
 }
 
