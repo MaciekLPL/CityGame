@@ -17,7 +17,7 @@ int main() {
 		system("cls");
 		gotoxy(0, 0);
 
-		int rows, cols;
+		int rows, cols;						//wstepne przygotowanie
 		chunk** board = NULL;
 		budget* wallet = NULL;
 		LARGE_INTEGER t1;
@@ -27,10 +27,10 @@ int main() {
 
 			switch (printStartingMenu()) {					//wybór z menu g³ównego
 			case 1:
-				board = newGame(&rows, &cols, &wallet);
+				board = newGame(&rows, &cols, &wallet);	
 				break;
 			case 2:
-				board = loadGame(&rows, &cols, &wallet, &time);
+				board = loadGame(&rows, &cols, &wallet, &time);	
 				break;
 			default:
 				return 0;
@@ -73,9 +73,9 @@ int main() {
 				gotoxy(x, y);
 			}
 			
-			if (wallet->money < -5000) {
+			if (wallet->money < -5000) {				//koniec gry gdy gracz zbankrutowa³ (info + zwalnianie pamiêci)
 				bankrupt(board, rows, wallet);
-				break;
+				break;									//przerwanie pêtli, powrót do menu g³ównego
 			}
 
 			int c = _getch();							//gdy uzytkownik nacisnie klawisz
@@ -93,7 +93,7 @@ int main() {
 					c = '\0';
 					setZone(board, x - 1, y - 1, c, &wallet);
 				}
-				else if (c == 'p') {								//wyjscie z gry
+				else if (c == 'p') {								//wyjscie z gry na ¿¹danie gracza
 					if (exitGame() == 1) {							//czy zapisaæ?
 						int timeToSave = (int)getTime(t1, time);	
 						saveGame(board, &rows, &cols, wallet, &timeToSave);
@@ -101,7 +101,7 @@ int main() {
 
 					freeBoard(board, rows);			//zwalnianie pamiêci
 					freeBudget(wallet);
-					break;
+					break;							//przerwanie pêtli, powrót do menu g³ównego
 				}
 				renderBoard(board, rows, cols, t1, wallet->money);
 			}
