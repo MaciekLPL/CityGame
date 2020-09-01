@@ -13,13 +13,13 @@ typedef struct chunk {
 	int population; /*!< Populacja pola*/
 	int attractiveness; /*!< Wspó³czynnik atrakcyjnoœci pola*/
 
-}chunk;
+} chunk;
 
 /*! \struct budget
 	\brief Element listy jednokierunkowej reprezentuj¹cej bud¿et */
 typedef struct budget {
 	int money; /*!< Iloœæ pieniêdzy w bud¿ecie */
 	struct budget* next; /*!< WskaŸnik do nastêpnego elementu. */
-}budget;
+} budget;
 
 #endif

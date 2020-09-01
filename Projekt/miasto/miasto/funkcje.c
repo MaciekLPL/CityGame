@@ -303,9 +303,20 @@ void calcTaxes(int population, budget** wallet) {
 	newWallet(taxes, wallet);
 }
 
+void roadCosts(chunk** board, int rows, int cols, budget** wallet) {
+	int roads = 0;
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < cols; j++) {
+			if (board[i][j].c == 'q')
+				roads++;
+		}
+	}
+	newWallet(-20 * roads, wallet);
+}
+
 int printStartingMenu() {
 
-	printf("Witaj w grze \"Miasto\"\n\nWybierz, co chcesz zrobic: \n");
+	printf("Witaj w menu gry \"Miasto\"\n\nWybierz, co chcesz zrobic: \n");
 	printf(" 1. Nowa gra\n");
 	printf(" 2. Wczytaj gre\n");
 	printf(" 3. Wyjdz\n");
@@ -472,5 +483,14 @@ void freeBudget(budget* wallet) {
 		wallet = wallet->next;
 		free(temp);
 	}
+}
+
+void bankrupt(chunk** board, int rows, budget* wallet) {
+	freeBoard(board, rows);
+	freeBudget(wallet);
+	system("cls");
+	gotoxy(0, 0);
+	printf("Twoje miasto zbankrutowalo! Zostaniesz teraz przeniesiony do menu glownego.");
+	Sleep(5000);
 }
 

@@ -160,6 +160,15 @@ void setZone(chunk** board, int x, int y, int c, budget** wallet);
 	\return Funkcja nic nie zwraca. */
 void calcTaxes(int population, budget** wallet);
 
+/*! \fn void roadCosts(chunk** board, int rows, int cols, budget** wallet)
+	\brief Funkcja kalkuluj¹ca koszty utrzymania dróg.
+	\param board Plansza
+	\param rows Liczba rzêdów planszy
+	\param cols Liczba kolumn planszy
+	\param wallet Lista jednokierunkowa z bud¿etem
+	\return Funkcja nic nie zwraca. */
+void roadCosts(chunk** board, int rows, int cols, budget** wallet);
+
 /*! \fn int printStartingMenu();
 	\brief Funkcja wyœwietlaj¹ca menu g³ówne.
 	\return Wybrana przez u¿ytkownika opcja */
@@ -230,6 +239,13 @@ void freeBoard(chunk** board, int rows);
 void freeBudget(budget* wallet);
 
 
+/*! \fn void bankrupt(chunk** board, int rows, budget* wallet);
+	\brief Funkcja obs³uguj¹ca bankructwo miasta
+	\param board Plansza
+	\param rows Liczba rzêdów planszy
+	\param wallet Lista jednokierunkowa z bud¿etem
+	\return Funkcja nic nie zwraca. */
+void bankrupt(chunk** board, int rows, budget* wallet);
 
 #endif
 
