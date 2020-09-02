@@ -23,23 +23,21 @@ int main() {
 		LARGE_INTEGER t1;
 		int time = 0;
 
-		while (board == NULL) {
-
-			switch (printStartingMenu()) {					//wybór z menu g³ównego
-			case 1:
-				board = newGame(&rows, &cols, &wallet);	
-				break;
-			case 2:
-				board = loadGame(&rows, &cols, &wallet, &time);	
-				break;
-			default:
-				return 0;
-			}
-
-			system("cls");
-			gotoxy(0, 0);
+		switch (printStartingMenu()) {					//wybór z menu g³ównego
+		case 1:
+			board = newGame(&rows, &cols, &wallet);	
+			break;
+		case 2:
+			board = loadGame(&rows, &cols, &wallet, &time);	
+			break;
+		default:
+			return 0;
 		}
 
+		if (!board) continue;			//je¿eli nie wczyta³o tablicy - zaczynamy od nowa
+
+		system("cls");
+		gotoxy(0, 0);
 		ShowConsoleCursor(1);
 		QueryPerformanceCounter(&t1);	//timer gry - start
 
