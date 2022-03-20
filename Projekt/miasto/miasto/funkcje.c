@@ -49,7 +49,7 @@ chunk** createBoard(int rows, int cols) {
 
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < cols; j++) {
-			board[i][j].c = '\0';
+			board[i][j].c = ' ';
 			board[i][j].attractiveness = 0;
 			board[i][j].population = 0;
 		}

@@ -88,7 +88,7 @@ int main() {
 				else if (c == 'w' || c == 'e' || c == 'r')
 					setZone(board, x - 1, y - 1, c, &wallet);
 				else if (c == 'd') {
-					c = '\0';
+					c = ' ';
 					setZone(board, x - 1, y - 1, c, &wallet);
 				}
 				else if (c == 'p') {								//wyjscie z gry na ¿¹danie gracza
